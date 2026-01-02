@@ -1,6 +1,7 @@
 # RoboBrain Demo App
 
 A Flask web application for running RoboBrain 2.0 inference with a user-friendly interface.
+<img width="1520" height="1820" alt="image" src="https://github.com/user-attachments/assets/4d6e255c-0f5d-452e-9847-b8f4f615f18b" />
 
 ## Features
 
@@ -58,12 +59,19 @@ pip install -r requirements.txt
 python app.py
 ```
 
+This will show output like:
+
+<img width="740" height="399" alt="image" src="https://github.com/user-attachments/assets/5affdca2-ca86-406b-88f6-8935f0912c39" />
+
 The app will start on `http://localhost:5000`
 
 ### First Run
 - The model will load on startup (may take 1-2 minutes)
 - Once loaded, you'll see the status indicator turn green
 - You can then start running inferences
+
+<img width="1518" height="1385" alt="image" src="https://github.com/user-attachments/assets/ab9f2896-b4ca-46e8-ae9b-4973b193362e" />
+
 
 ## Usage
 
@@ -73,6 +81,29 @@ The app will start on `http://localhost:5000`
 4. **Adjust Temperature** (optional): Control response creativity (0 = deterministic, 1 = creative)
 5. **Run Inference**: Click the "Run Inference" button
 6. **View Results**: The model's response will appear below the form
+
+<img width="1585" height="2585" alt="image" src="https://github.com/user-attachments/assets/2abf0270-954d-4853-99aa-fbad1d1c6b78" />
+
+
+## Visualization Tools
+
+Use the outputs from the model inference and visualize on your images to betetr understand the output.
+
+### Bounding Box 
+
+The input should be in the format: [574, 236, 622, 306]
+
+<img width="1537" height="1758" alt="image" src="https://github.com/user-attachments/assets/8265db36-a744-4057-b747-abf2fecacdd0" />
+
+
+### Points Visualization
+
+The input should be a list of points in the format: [(400, 309), (357, 268), (311, 236), ...etc]
+
+<img width="781" height="835" alt="image" src="https://github.com/user-attachments/assets/0e86420f-6c42-44bf-8be5-19f92131fb12" />
+
+
+
 
 ## Task Types
 
