@@ -1,5 +1,8 @@
 # Humanoid Projects
 
+## Docs
+- [Humanoid Robot Navigation Architecture (High-Level)](docs/humanoid_navigation_architecture.md)
+
 ## RoboBrain2.0
 https://github.com/FlagOpen/RoboBrain2.0
 
