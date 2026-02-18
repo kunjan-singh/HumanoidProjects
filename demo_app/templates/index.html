@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoboBrain Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: white;
+            color: #1e40af;
+            padding: 30px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            border-bottom: 3px solid #3b82f6;
+        }
+        
+        .header-logo {
+            height: 80px;
+            width: auto;
+        }
+        
+        .header-text {
+            text-align: left;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.7;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 15px 20px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            color: #6b7280;
+            transition: all 0.3s;
+            margin: 0;
+            border-radius: 0;
+        }
+        
+        .tab-button:hover {
+            background: #e5e7eb;
+            color: #1e40af;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .tab-button.active {
+            color: #1e40af;
+            background: white;
+            border-bottom-color: #3b82f6;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1em;
+        }
+        
+        input[type="file"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #3b82f6;
+        }
+        
+        input[type="file"] {
+            padding: 10px;
+            cursor: pointer;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        input[type="file"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .slider-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        input[type="range"] {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #1e40af;
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: none;
+            transition: background 0.3s;
+        }
+        
+        input[type="range"]::-moz-range-thumb:hover {
+            background: #1e40af;
+        }
+        
+        .temp-value {
+            min-width: 45px;
+            text-align: center;
+            font-weight: 600;
+            color: #3b82f6;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        
+        button.loading .spinner {
+            display: inline-block;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .result-container {
+            display: none;
+            margin-top: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .result-container.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .result-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .result-text {
+            font-size: 1em;
+            color: #555;
+            line-height: 1.6;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+        
+        .error-message {
+            display: none;
+            padding: 15px;
+            background: #fee;
+            border: 1px solid #fcc;
+            border-radius: 6px;
+            color: #c33;
+            margin-bottom: 20px;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .success-message {
+            display: none;
+            padding: 15px;
+            background: #efe;
+            border: 1px solid #cfc;
+            border-radius: 6px;
+            color: #3c3;
+            margin-bottom: 20px;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+        
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        
+        .loading-indicator.show {
+            display: block;
+        }
+        
+        .model-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: #dbeafe;
+            border-radius: 6px;
+            font-size: 0.95em;
+            color: #1e40af;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ffa500;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        .status-dot.ready {
+            background: #4caf50;
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .stats-panel {
+            display: block;
+            background: #f8f9fa;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            padding: 0;
+            margin-bottom: 25px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .stats-header {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 6px 6px 0 0;
+            user-select: none;
+            transition: all 0.3s;
+        }
+        
+        .stats-header:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+        }
+        
+        .stats-header h3 {
+            margin: 0;
+            font-size: 1.1em;
+        }
+        
+        .stats-toggle-icon {
+            font-size: 1.2em;
+            transition: transform 0.3s;
+        }
+        
+        .stats-toggle-icon.open {
+            transform: rotate(180deg);
+        }
+        
+        .stats-content {
+            display: none;
+            padding: 20px;
+        }
+        
+        .stats-content.open {
+            display: block;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.3em;
+            color: #333;
+            font-weight: 700;
+            word-break: break-all;
+        }
+        
+        .stat-value.loading {
+            color: #ffa500;
+        }
+        
+        .model-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .model-controls select {
+            padding: 12px !important;
+        }
+        
+        .control-btn {
+            padding: 12px 20px;
+            border: 2px solid #3b82f6;
+            background: white;
+            color: #3b82f6;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .control-btn:hover {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .control-btn.danger {
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+        
+        .control-btn.danger:hover {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .visualization-container {
+            margin-top: 20px;
+        }
+        
+        .image-preview {
+            max-width: 100%;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .canvas-container {
+            position: relative;
+            display: inline-block;
+            margin-top: 15px;
+        }
+        
+        #visualizationCanvas {
+            max-width: 100%;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: crosshair;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="/static/logo2.png" alt="RoboBrain Logo" class="header-logo">
+            <div class="header-text">
+                <h1>RoboBrain 2.0 Demo Utility</h1>
+                <p>Upload an image and enter a prompt for AI-powered inference</p>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab-button active" id="inferenceTab" onclick="switchTab('inference')">Inference</button>
+            <button class="tab-button" id="visualizationTab" onclick="switchTab('visualization')">Bounding Box Visualization</button>
+            <button class="tab-button" id="pointsTab" onclick="switchTab('points')">Points Visualization</button>
+        </div>
+        
+        <div class="tab-content active" id="inferenceContent">
+            <div class="content">
+            <div class="stats-panel" id="statsPanel">
+                <div class="stats-header" id="statsHeaderBtn">
+                    <h3>📊 Model Statistics</h3>
+                    <span class="stats-toggle-icon" id="statsIcon">▼</span>
+                </div>
+                <div class="stats-content" id="statsContent">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">Model Name</div>
+                            <div class="stat-value" id="modelName">Loading...</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Status</div>
+                            <div class="stat-value" id="modelStatus">Loading...</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Device</div>
+                            <div class="stat-value" id="deviceInfo">Loading...</div>
+                        </div>
+                    </div>
+                    
+                    <div style="border-top: 1px solid #ddd; padding-top: 20px;">
+                        <h4 style="margin-bottom: 15px; color: #333;">Model Selection</h4>
+                        <div class="model-controls">
+                            <select id="modelSelector" style="padding: 12px !important;">
+                                <option value="BAAI/RoboBrain2.0-3B">RoboBrain 2.0 - 3B</option>
+                                <option value="BAAI/RoboBrain2.0-7B" selected>RoboBrain 2.0 - 7B</option>
+                                <option value="BAAI/RoboBrain2.0-32B">RoboBrain 2.0 - 32B</option>
+                            </select>
+                            <button class="control-btn" id="loadModelBtn">Load Model</button>
+                        </div>
+                        <button class="control-btn danger" id="unloadModelBtn" style="margin-top: 10px;">Unload Model</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="model-status">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Checking model status...</span>
+            </div>
+            
+            <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 15px; margin-bottom: 20px; border-radius: 6px;">
+                <div style="display: flex; align-items: start; gap: 10px;">
+                    <span style="font-size: 1.5em;">💡</span>
+                    <div>
+                        <strong style="color: #1e40af; display: block; margin-bottom: 5px;">Need inspiration?</strong>
+                        <span style="color: #1f2937; font-size: 0.95em;">
+                            Check out 
+                            <a href="https://github.com/FlagOpen/RoboBrain2.0?tab=readme-ov-file#-simple-inference" 
+                               target="_blank" 
+                               style="color: #3b82f6; text-decoration: none; font-weight: 600;">
+                                example prompts and test images
+                            </a> 
+                            in the official RoboBrain 2.0 repository.
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+            
+            <form id="inferenceForm">
+                <div class="form-group">
+                    <label for="imageInput">Upload Image *</label>
+                    <input type="file" id="imageInput" name="image" accept="image/*" required>
+                    <small style="color: #666; display: block; margin-top: 5px;">Supported formats: JPG, PNG, BMP, GIF (Max 50MB)</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="promptInput">Prompt *</label>
+                    <textarea id="promptInput" name="prompt" placeholder="Enter your prompt or question about the image..." required></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taskSelect">Task Type</label>
+                        <select id="taskSelect" name="task">
+                            <option value="general">General Question</option>
+                            <option value="pointing">Pointing</option>
+                            <option value="affordance">Affordance</option>
+                            <option value="trajectory">Trajectory</option>
+                            <option value="grounding">Grounding</option>
+                        </select>
+                        <small style="color: #666; display: block; margin-top: 5px;">Select the type of task</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="temperatureInput">Temperature</label>
+                        <div class="slider-group">
+                            <input type="range" id="temperatureInput" name="temperature" min="0" max="1" step="0.1" value="0.7">
+                            <span class="temp-value" id="tempValue">0.7</span>
+                        </div>
+                        <small style="color: #666; display: block; margin-top: 5px;">Lower = more deterministic, Higher = more creative</small>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="verboseCheckbox" name="verbose" style="width: auto; margin: 0;">
+                    <label for="verboseCheckbox" style="margin-bottom: 0;">Verbose Output (Show Thinking Process)</label>
+                </div>
+                
+                <button type="submit" id="submitBtn">
+                    <span class="spinner"></span>
+                    Run Inference
+                </button>
+            </form>
+            
+            <div class="loading-indicator" id="loadingIndicator">
+                <div class="spinner" style="display: inline-block; margin-right: 10px;"></div>
+                <span>Running inference... This may take a minute or two.</span>
+            </div>
+            
+            <div class="result-container" id="resultContainer">
+                <div class="result-title">Result</div>
+                <div class="result-text" id="resultText"></div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Visualization Tab -->
+        <div class="tab-content" id="visualizationContent">
+            <div class="form-container" style="padding: 40px;">
+                <h2>Bounding Box Visualization</h2>
+                <p style="color: #6b7280; margin-bottom: 20px;">
+                    Upload an image and enter bounding box coordinates to visualize them.
+                </p>
+
+                <div class="form-group">
+                    <label for="visualizationImageInput">Upload Image *</label>
+                    <input type="file" id="visualizationImageInput" name="visualizationImage" accept="image/*">
+                    <small style="color: #666; display: block; margin-top: 5px;">Supported formats: JPG, PNG, BMP, GIF</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="bboxCoordinates">Bounding Box Coordinates</label>
+                    <textarea 
+                        id="bboxCoordinates" 
+                        name="bboxCoordinates" 
+                        rows="4"
+                        placeholder='Enter coordinates in format: [189, 75, 264, 208]'
+                        style="font-family: 'Courier New', monospace;"
+                    ></textarea>
+                    <small style="color: #6b7280; display: block; margin-top: 5px;">
+                        Enter coordinates as [x_min, y_min, x_max, y_max]
+                    </small>
+                </div>
+
+                <button type="button" class="submit-btn" id="drawBtn" onclick="drawBoundingBoxes()">
+                    Draw Bounding Boxes
+                </button>
+
+                <div id="visualizationError" class="error-message"></div>
+
+                <div class="visualization-container" id="visualizationContainer" style="display: none;">
+                    <h3 style="color: #1f2937; margin-bottom: 10px;">Visualization Result</h3>
+                    <canvas id="visualizationCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Points Visualization Tab -->
+        <div class="tab-content" id="pointsContent">
+            <div class="form-container" style="padding: 40px;">
+                <h2>Points Visualization</h2>
+                <p style="color: #6b7280; margin-bottom: 20px;">
+                    Upload an image and enter point coordinates to visualize them.
+                </p>
+
+                <div class="form-group">
+                    <label for="pointsImageInput">Upload Image *</label>
+                    <input type="file" id="pointsImageInput" name="pointsImage" accept="image/*">
+                    <small style="color: #666; display: block; margin-top: 5px;">Supported formats: JPG, PNG, BMP, GIF</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="pointsCoordinates">Point Coordinates</label>
+                    <textarea 
+                        id="pointsCoordinates" 
+                        name="pointsCoordinates" 
+                        rows="4"
+                        placeholder='Enter coordinates in format: [(137, 116), (169, 94), (208, 84), (228, 80)]'
+                        style="font-family: 'Courier New', monospace;"
+                    ></textarea>
+                    <small style="color: #6b7280; display: block; margin-top: 5px;">
+                        Enter coordinates as [(x1, y1), (x2, y2), ...]
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label style="margin-bottom: 10px;">Visualization Options</label>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="trajectoryCheckbox" style="width: auto; margin: 0;">
+                            <label for="trajectoryCheckbox" style="margin: 0;">Draw trajectory lines connecting points</label>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="bboxCheckbox" style="width: auto; margin: 0;">
+                            <label for="bboxCheckbox" style="margin: 0;">Draw bounding box around all points</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="submit-btn" id="drawPointsBtn" onclick="drawPoints()">
+                    Draw Points
+                </button>
+
+                <div id="pointsError" class="error-message"></div>
+
+                <div class="visualization-container" id="pointsContainer" style="display: none;">
+                    <h3 style="color: #1f2937; margin-bottom: 10px;">Visualization Result</h3>
+                    <canvas id="pointsCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const form = document.getElementById('inferenceForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const resultContainer = document.getElementById('resultContainer');
+        const resultText = document.getElementById('resultText');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const temperatureInput = document.getElementById('temperatureInput');
+        const tempValue = document.getElementById('tempValue');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        const verboseCheckbox = document.getElementById('verboseCheckbox');
+        
+        // Global variable to store the uploaded image
+        let uploadedImageData = null;
+        
+        // Stats panel elements
+        const statsHeaderBtn = document.getElementById('statsHeaderBtn');
+        const statsContent = document.getElementById('statsContent');
+        const statsIcon = document.getElementById('statsIcon');
+        const statsPanel = document.getElementById('statsPanel');
+        const modelNameEl = document.getElementById('modelName');
+        const modelStatusEl = document.getElementById('modelStatus');
+        const deviceInfoEl = document.getElementById('deviceInfo');
+        const modelSelector = document.getElementById('modelSelector');
+        const loadModelBtn = document.getElementById('loadModelBtn');
+        const unloadModelBtn = document.getElementById('unloadModelBtn');
+        
+        // Toggle stats dropdown
+        statsHeaderBtn.addEventListener('click', () => {
+            statsContent.classList.toggle('open');
+            statsIcon.classList.toggle('open');
+        });
+        
+        // Update temperature display
+        temperatureInput.addEventListener('input', () => {
+            tempValue.textContent = temperatureInput.value;
+        });
+        
+        // Load model button
+        loadModelBtn.addEventListener('click', async () => {
+            const modelId = modelSelector.value;
+            await loadModel(modelId);
+        });
+        
+        // Unload model button
+        unloadModelBtn.addEventListener('click', async () => {
+            await unloadModel();
+        });
+        
+        // Check model status on load
+        window.addEventListener('load', checkModelStatus);
+        
+        function checkModelStatus() {
+            fetch('/api/health')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.model_loaded) {
+                        statusDot.classList.add('ready');
+                        statusText.textContent = '✓ Model ready! You can run inference.';
+                        submitBtn.disabled = false;
+                        if (data.model_id) {
+                            modelSelector.value = data.model_id;
+                        }
+                    } else {
+                        statusDot.classList.remove('ready');
+                        statusText.textContent = '⏳ Loading model... This may take a minute.';
+                        submitBtn.disabled = true;
+                        // Check again in 3 seconds
+                        setTimeout(checkModelStatus, 3000);
+                    }
+                    // Update stats whenever status is checked
+                    updateModelStats();
+                })
+                .catch(err => {
+                    statusText.textContent = '❌ Error checking model status';
+                    console.error('Status check error:', err);
+                });
+        }
+        
+        async function updateModelStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const data = await response.json();
+                
+                if (!response.ok && data.error) {
+                    console.error('Stats error from server:', data.error);
+                }
+                
+                modelNameEl.textContent = data.model_id || 'None';
+                modelStatusEl.textContent = data.model_loaded ? '✓ Loaded' : '✗ Not Loaded';
+                deviceInfoEl.textContent = data.device || 'Unknown';
+            } catch (err) {
+                console.error('Error updating stats:', err);
+                modelNameEl.textContent = 'Error: ' + err.message;
+                modelStatusEl.textContent = 'Error: Network Issue';
+                deviceInfoEl.textContent = 'Error: Network Issue';
+            }
+        }
+        
+        async function loadModel(modelId) {
+            try {
+                loadModelBtn.disabled = true;
+                loadModelBtn.textContent = 'Loading...';
+                
+                const response = await fetch('/api/load-model', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ model_id: modelId })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showSuccess(`✓ Model loaded successfully! (${modelId})`);
+                    checkModelStatus();
+                    updateModelStats();
+                } else {
+                    showError(data.error || 'Failed to load model');
+                }
+            } catch (err) {
+                showError('Error loading model: ' + err.message);
+            } finally {
+                loadModelBtn.disabled = false;
+                loadModelBtn.textContent = 'Load Model';
+            }
+        }
+        
+        async function unloadModel() {
+            try {
+                unloadModelBtn.disabled = true;
+                unloadModelBtn.textContent = 'Unloading...';
+                
+                const response = await fetch('/api/unload-model', {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showSuccess('✓ Model unloaded successfully!');
+                    checkModelStatus();
+                    updateModelStats();
+                } else {
+                    showError(data.error || 'Failed to unload model');
+                }
+            } catch (err) {
+                showError('Error unloading model: ' + err.message);
+            } finally {
+                unloadModelBtn.disabled = false;
+                unloadModelBtn.textContent = 'Unload Model';
+            }
+        }
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            resultContainer.classList.remove('show');
+            successMessage.classList.remove('show');
+        }
+        
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.classList.add('show');
+            errorMessage.classList.remove('show');
+        }
+        
+        function hideMessages() {
+            errorMessage.classList.remove('show');
+            successMessage.classList.remove('show');
+        }
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            hideMessages();
+            resultContainer.classList.remove('show');
+            
+            // Validate form
+            const imageInput = document.getElementById('imageInput');
+            const promptInput = document.getElementById('promptInput');
+            
+            if (!imageInput.files || !imageInput.files[0]) {
+                showError('Please upload an image.');
+                return;
+            }
+            
+            if (!promptInput.value.trim()) {
+                showError('Please enter a prompt.');
+                return;
+            }
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            loadingIndicator.classList.add('show');
+            
+            // Create FormData
+            const formData = new FormData();
+            formData.append('image', imageInput.files[0]);
+            formData.append('prompt', promptInput.value);
+            formData.append('task', document.getElementById('taskSelect').value);
+            formData.append('temperature', temperatureInput.value);
+            
+            // Store the uploaded image for visualization
+            const file = imageInput.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedImageData = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            
+            try {
+                const response = await fetch('/api/inference', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    showError(data.error || 'An error occurred during inference.');
+                } else {
+                    showSuccess('✓ Inference completed successfully!');
+                    
+                    // Format the result object
+                    let resultContent = '';
+                    const showVerbose = verboseCheckbox.checked;
+                    
+                    if (data.result) {
+                        if (showVerbose && data.result.thinking) {
+                            resultContent += '💭 Thinking:\n' + data.result.thinking + '\n\n';
+                        }
+                        if (data.result.answer) {
+                            resultContent += '💬 Answer:\n' + data.result.answer;
+                        } else {
+                            resultContent += data.result;
+                        }
+                    }
+                    
+                    resultText.textContent = resultContent || 'No result returned';
+                    resultContainer.classList.add('show');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                loadingIndicator.classList.remove('show');
+            }
+        });
+
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Get all tab contents and buttons
+            const tabContents = document.querySelectorAll('.tab-content');
+            const tabButtons = document.querySelectorAll('.tab-button');
+            
+            // Hide all tab contents
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show the selected tab content
+            const selectedContent = document.getElementById(tabName + 'Content');
+            if (selectedContent) {
+                selectedContent.classList.add('active');
+            }
+            
+            // Add active class to the clicked button
+            const selectedButton = document.getElementById(tabName + 'Tab');
+            if (selectedButton) {
+                selectedButton.classList.add('active');
+            }
+        }
+
+        // Bounding box visualization functionality
+        function drawBoundingBoxes() {
+            const coordsInput = document.getElementById('bboxCoordinates').value.trim();
+            const errorDiv = document.getElementById('visualizationError');
+            const container = document.getElementById('visualizationContainer');
+            const canvas = document.getElementById('visualizationCanvas');
+            const vizImageInput = document.getElementById('visualizationImageInput');
+            
+            // Clear previous error
+            errorDiv.textContent = '';
+            errorDiv.classList.remove('show');
+            
+            // Check if an image has been uploaded (either from inference or visualization tab)
+            if (!uploadedImageData && (!vizImageInput.files || !vizImageInput.files[0])) {
+                errorDiv.textContent = 'Please upload an image first.';
+                errorDiv.classList.add('show');
+                return;
+            }
+            
+            // If image is uploaded in visualization tab, use it
+            if (vizImageInput.files && vizImageInput.files[0]) {
+                const file = vizImageInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImageData = e.target.result;
+                    performDrawing();
+                };
+                reader.readAsDataURL(file);
+                return;
+            }
+            
+            // Otherwise use the stored image
+            performDrawing();
+        }
+        
+        function performDrawing() {
+            const coordsInput = document.getElementById('bboxCoordinates').value.trim();
+            const errorDiv = document.getElementById('visualizationError');
+            const container = document.getElementById('visualizationContainer');
+            const canvas = document.getElementById('visualizationCanvas');
+            
+            // Check if coordinates are provided
+            if (!coordsInput) {
+                errorDiv.textContent = 'Please enter bounding box coordinates.';
+                errorDiv.classList.add('show');
+                return;
+            }
+            
+            // Parse the coordinates
+            let bbox;
+            try {
+                bbox = JSON.parse(coordsInput);
+                
+                // Validate format: should be [x_min, y_min, x_max, y_max]
+                if (!Array.isArray(bbox) || bbox.length !== 4) {
+                    throw new Error('Bounding box must be an array of 4 numbers');
+                }
+                
+                for (let val of bbox) {
+                    if (typeof val !== 'number') {
+                        throw new Error('All values must be numbers');
+                    }
+                }
+                
+                // Ensure x_max > x_min and y_max > y_min
+                if (bbox[2] <= bbox[0] || bbox[3] <= bbox[1]) {
+                    throw new Error('Invalid bounding box: x_max must be > x_min and y_max must be > y_min');
+                }
+            } catch (e) {
+                errorDiv.textContent = 'Invalid coordinate format. Use: [x_min, y_min, x_max, y_max]';
+                errorDiv.classList.add('show');
+                return;
+            }
+            
+            // Load and draw the image with bounding boxes
+            const img = new Image();
+            img.onload = function() {
+                // Set canvas size to image size
+                canvas.width = img.width;
+                canvas.height = img.height;
+                
+                const ctx = canvas.getContext('2d');
+                
+                // Draw the image
+                ctx.drawImage(img, 0, 0);
+                
+                // Draw bounding box
+                const [x_min, y_min, x_max, y_max] = bbox;
+                const width = x_max - x_min;
+                const height = y_max - y_min;
+                
+                // Draw rectangle
+                ctx.strokeStyle = '#3b82f6';  // Blue color
+                ctx.fillStyle = 'rgba(59, 130, 246, 0.3)';  // Semi-transparent blue
+                ctx.lineWidth = 3;
+                ctx.fillRect(x_min, y_min, width, height);
+                ctx.strokeRect(x_min, y_min, width, height);
+                
+                // Draw corner points
+                ctx.fillStyle = '#ef4444';  // Red color for points
+                const corners = [
+                    [x_min, y_min],
+                    [x_max, y_min],
+                    [x_max, y_max],
+                    [x_min, y_max]
+                ];
+                
+                for (let [x, y] of corners) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+                
+                // Add label with coordinates
+                ctx.fillStyle = '#1f2937';
+                ctx.font = 'bold 14px Arial';
+                ctx.fillText(`[${x_min}, ${y_min}, ${x_max}, ${y_max}]`, x_min + 8, y_min - 8);
+                
+                // Show the container
+                container.style.display = 'block';
+            };
+            
+            img.onerror = function() {
+                errorDiv.textContent = 'Error loading image. Please try uploading a new image.';
+                errorDiv.classList.add('show');
+            };
+            
+            img.src = uploadedImageData;
+        }
+        
+        // Points visualization functionality
+        function drawPoints() {
+            const coordsInput = document.getElementById('pointsCoordinates').value.trim();
+            const errorDiv = document.getElementById('pointsError');
+            const container = document.getElementById('pointsContainer');
+            const canvas = document.getElementById('pointsCanvas');
+            const pointsImageInput = document.getElementById('pointsImageInput');
+            const trajectoryEnabled = document.getElementById('trajectoryCheckbox').checked;
+            const bboxEnabled = document.getElementById('bboxCheckbox').checked;
+            
+            // Clear previous error
+            errorDiv.textContent = '';
+            errorDiv.classList.remove('show');
+            
+            // Check if an image has been uploaded
+            if (!uploadedImageData && (!pointsImageInput.files || !pointsImageInput.files[0])) {
+                errorDiv.textContent = 'Please upload an image first.';
+                errorDiv.classList.add('show');
+                return;
+            }
+            
+            // If image is uploaded in points tab, use it
+            if (pointsImageInput.files && pointsImageInput.files[0]) {
+                const file = pointsImageInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImageData = e.target.result;
+                    performPointsDrawing(coordsInput, errorDiv, container, canvas, trajectoryEnabled, bboxEnabled);
+                };
+                reader.readAsDataURL(file);
+                return;
+            }
+            
+            // Otherwise use the stored image
+            performPointsDrawing(coordsInput, errorDiv, container, canvas, trajectoryEnabled, bboxEnabled);
+        }
+        
+        function performPointsDrawing(coordsInput, errorDiv, container, canvas, trajectoryEnabled, bboxEnabled) {
+            // Check if coordinates are provided
+            if (!coordsInput) {
+                errorDiv.textContent = 'Please enter point coordinates.';
+                errorDiv.classList.add('show');
+                return;
+            }
+            
+            // Parse the coordinates
+            let points;
+            try {
+                // Replace parentheses with square brackets for JSON parsing
+                const jsonStr = coordsInput
+                    .replace(/\(/g, '[')
+                    .replace(/\)/g, ']');
+                points = JSON.parse(jsonStr);
+                
+                // Validate format
+                if (!Array.isArray(points)) {
+                    throw new Error('Coordinates must be an array');
+                }
+                
+                for (let point of points) {
+                    if (!Array.isArray(point) || point.length !== 2) {
+                        throw new Error('Each coordinate must be a pair [x, y]');
+                    }
+                }
+                
+                if (points.length === 0) {
+                    throw new Error('At least one point is required');
+                }
+            } catch (e) {
+                errorDiv.textContent = 'Invalid coordinate format. Use: [(x1, y1), (x2, y2), ...]';
+                errorDiv.classList.add('show');
+                return;
+            }
+            
+            // Load and draw the image with points
+            const img = new Image();
+            img.onload = function() {
+                // Set canvas size to image size
+                canvas.width = img.width;
+                canvas.height = img.height;
+                
+                const ctx = canvas.getContext('2d');
+                
+                // Draw the image
+                ctx.drawImage(img, 0, 0);
+                
+                // Draw bounding box if enabled
+                if (bboxEnabled) {
+                    const padding = 20;
+                    let minX = Math.min(...points.map(p => p[0]));
+                    let maxX = Math.max(...points.map(p => p[0]));
+                    let minY = Math.min(...points.map(p => p[1]));
+                    let maxY = Math.max(...points.map(p => p[1]));
+                    
+                    // Apply padding
+                    minX = Math.max(0, minX - padding);
+                    minY = Math.max(0, minY - padding);
+                    maxX = Math.min(img.width, maxX + padding);
+                    maxY = Math.min(img.height, maxY + padding);
+                    
+                    // Draw bounding box
+                    ctx.strokeStyle = '#10b981';  // Green color
+                    ctx.fillStyle = 'rgba(16, 185, 129, 0.1)';  // Semi-transparent green
+                    ctx.lineWidth = 2;
+                    ctx.fillRect(minX, minY, maxX - minX, maxY - minY);
+                    ctx.strokeRect(minX, minY, maxX - minX, maxY - minY);
+                }
+                
+                // Draw trajectory lines if enabled
+                if (trajectoryEnabled && points.length > 1) {
+                    ctx.strokeStyle = '#3b82f6';  // Blue color
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(points[0][0], points[0][1]);
+                    
+                    for (let i = 1; i < points.length; i++) {
+                        ctx.lineTo(points[i][0], points[i][1]);
+                    }
+                    
+                    ctx.stroke();
+                    
+                    // Draw arrows on the trajectory
+                    for (let i = 1; i < points.length; i++) {
+                        const [x1, y1] = points[i - 1];
+                        const [x2, y2] = points[i];
+                        const angle = Math.atan2(y2 - y1, x2 - x1);
+                        const arrowSize = 10;
+                        
+                        ctx.fillStyle = '#3b82f6';
+                        ctx.beginPath();
+                        ctx.moveTo(x2, y2);
+                        ctx.lineTo(
+                            x2 - arrowSize * Math.cos(angle - Math.PI / 6),
+                            y2 - arrowSize * Math.sin(angle - Math.PI / 6)
+                        );
+                        ctx.lineTo(
+                            x2 - arrowSize * Math.cos(angle + Math.PI / 6),
+                            y2 - arrowSize * Math.sin(angle + Math.PI / 6)
+                        );
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+                }
+                
+                // Draw points as circles
+                ctx.fillStyle = '#ef4444';  // Red color for points
+                ctx.strokeStyle = '#ffffff';  // White outline
+                ctx.lineWidth = 2;
+                
+                for (let i = 0; i < points.length; i++) {
+                    const [x, y] = points[i];
+                    
+                    // Draw circle
+                    ctx.beginPath();
+                    ctx.arc(x, y, 6, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+                    
+                    // Draw point number
+                    ctx.fillStyle = '#1f2937';
+                    ctx.font = 'bold 12px Arial';
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 3;
+                    const label = `${i + 1}`;
+                    ctx.strokeText(label, x + 10, y - 10);
+                    ctx.fillText(label, x + 10, y - 10);
+                    
+                    // Reset for next point
+                    ctx.fillStyle = '#ef4444';
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                }
+                
+                // Show the container
+                container.style.display = 'block';
+            };
+            
+            img.onerror = function() {
+                errorDiv.textContent = 'Error loading image. Please try uploading a new image.';
+                errorDiv.classList.add('show');
+            };
+            
+            img.src = uploadedImageData;
+        }
+        
+        // Initialize: Show inference tab by default
+        switchTab('inference');
+    </script>
+</body>
+</html>
